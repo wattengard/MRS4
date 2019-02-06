@@ -2,4 +2,4 @@
 
 ## Innhold:
 
-* [Fødselsnummer, D-nummer og hjelpenummer](fnd.md)
+* [Fødselsnummer, D-nummer og hjelpenummer](fnr.md)
