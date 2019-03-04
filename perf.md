@@ -1,0 +1,10 @@
+# Gotchas rundt henting av skjema, entity framework og performance i MRS
+
+## Bakgrunn
+Jeg skriver hovedsaklig denne artikkelen samtidig som jeg etterforsker treghet i RevNatus. Den vil derfor sannsynligvis være veldig rotete og uversiktlig i starten. Kanskje noen har tid til å rydde i informasjonen etter hvert.
+
+## ListForms-viewet
+Mange av problemene i denne lista er kanskje spesielt relatert til RevNatus da hovedskjema i RevNatus er på over 650 kolonner/felter. Dette gjør at Entity Framework bruker uforskammet lang tid på å kompliere sql-spørringene. Man må derfor være oppmerksom på hvordan man skriver disse spørringene for å gjøre de mest mulig cache-bare (bra norsk).
+
+Et av de største problemene i ListForms-viewet er at metoden `GetFormsForPatientInRegistry()` ikke forstår at den i dette tilfellet kun skal brukes til å returnere en oversikt over skjema, gjerne med litt mindre informasjon. Dette medfører at for eksempelpasienten som jeg benytter akkurat nå returnerer 193KB med data bare for å liste ut litt informasjon om til sammen 5 skjema. Vedkommende har 1 Hovedskjema, 4 Oppfølginsskjema. I tillegg fins det 6 PROMS-skjema på pasienten, og disse returneres også i sin helhet til klientapplikasjonen før det filtreres til innholdet som faktisk trengs i `ListForms` viewet. I tillegg ser det ut til at `PromsFormOrderService.svc` kalles 15 ganger. Jeg antar det er 3 ganger pr skjema. Dette kallet er også i nåværende kjerne - jeg har en fiks liggende som ikke er pushet pr 7.10.14 iallefall - lagt opp slik at det returnerer fullt hovedskjema, ikke 1, men 2 ganger, før det sjekker PROMS-skjema. Disse spørringene er i tillegg skrevet på en slik måte at de ikke kan caches, derfor er det 2 genereringer som foretas for hvert skjema. Noe som gjør at hvert av disse kallene i RevNatus' tilfelle tar 4-6 sekunder pr skjema.
+
