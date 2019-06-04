@@ -1,5 +1,6 @@
 # Regler for versjonering av kjernen
 Versjonering av kjernen skal følge Semantic Versioning (SemVer): https://semver.org/spec/v2.0.0.html
+__NB! Enhver som skal lage ny versjon av kjernen MÅ lese og forstå denne først.__
 
 ## Versjonsnavn release
 Format: x.y.z  
